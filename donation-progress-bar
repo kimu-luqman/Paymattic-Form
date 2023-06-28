@@ -1,4 +1,5 @@
 <?php
+
 // Define the shortcode function
 function progress_bar_shortcode($atts) {
     // Extract the form ID and goal value from the shortcode attributes
@@ -60,5 +61,3 @@ function progress_bar_shortcode($atts) {
 
 // Register the shortcode
 add_shortcode('custom_progress', 'progress_bar_shortcode');
-
-?>
