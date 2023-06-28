@@ -1,0 +1,48 @@
+<?php
+// Define the shortcode function
+function total_paid_shortcode($atts) {
+    // Extract the form ID from the shortcode attributes
+    $atts = shortcode_atts(array(
+        'form_id' => '',
+    ), $atts);
+    $form_id = $atts['form_id'];
+
+    // Insert your WordPress database credentials
+    $host = "localhost";
+    $username = "root";
+    $password = "root";
+    $database = "local";
+
+    // Create a connection
+    $conn = new mysqli($host, $username, $password, $database);
+
+    // Check the connection
+    if ($conn->connect_error) {
+        return "Database connection failed";
+    }
+
+    // Prepare the SQL query to retrieve the total paid value
+    $stmt = $conn->prepare("SELECT SUM(payment_total) AS total_paid FROM wp_wpf_submissions WHERE form_id = ? AND payment_status = 'paid'");
+    $stmt->bind_param("s", $form_id);
+
+    // Execute the query
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Fetch the total paid value
+    $row = $result->fetch_assoc();
+    $total_paid = floatval($row['total_paid']);
+
+    // Close the statement and the connection
+    $stmt->close();
+    $conn->close();
+
+    // Format the total paid value
+    $formatted_total_paid = number_format($total_paid/100, 2);
+
+    // Return the total paid value
+    return 'RM' . $formatted_total_paid;
+}
+
+// Register the shortcode
+add_shortcode('total_paid', 'total_paid_shortcode');
